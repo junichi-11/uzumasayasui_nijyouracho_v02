@@ -73,3 +73,33 @@
  .closing{padding-top:155px!important}.closing-thread.closing-filaments{width:260px;height:170px}
 }
 @media(prefers-reduced-motion:reduce){.couture-stage .filament,.closing-filaments path{animation:none!important;stroke-dashoffset:0!important}.couture-stage .thread-tag{opacity:1!important}}
+
+/* R3 restored opening: typography first, architecture after, no thread over the rendering */
+.opening-veil{position:fixed;inset:0;z-index:1000;background:#f5f4ee;display:grid;place-items:center;overflow:hidden;animation:veilLeave 1.25s cubic-bezier(.77,0,.18,1) 4.35s forwards;pointer-events:none}
+.opening-inner{width:min(460px,80vw);text-align:center;position:relative}
+.opening-overline{font:400 9px/1.5 var(--sans);letter-spacing:.37em;color:#9b9c91;opacity:0;animation:softReveal 1.2s ease .25s forwards}
+.opening-verbs{font:400 clamp(35px,5vw,59px)/1.65 var(--serif);letter-spacing:.12em;color:#333b34;margin:30px 0 15px;display:flex;flex-direction:column;gap:2px}
+.opening-verbs span{opacity:0;transform:translateY(13px);animation:softReveal 1.3s cubic-bezier(.22,.61,.36,1) forwards}
+.opening-verbs span:nth-child(1){animation-delay:.45s}.opening-verbs span:nth-child(2){animation-delay:1.05s}.opening-verbs span:nth-child(3){animation-delay:1.65s}
+.opening-trace{height:65px;width:100px;position:relative;margin:8px auto 12px;opacity:0;animation:softReveal 1s ease 2s forwards}
+.opening-trace i{position:absolute;left:50%;top:-12px;width:1px;height:95px;background:linear-gradient(to bottom,transparent,#9fa99b 25%,#b9a285 75%,transparent);transform:translateX(calc((var(--j) - 2)*8px)) rotate(calc((var(--j) - 2)*2deg));transform-origin:50% 30%;clip-path:inset(0 0 100% 0);animation:verticalUnspool 3s cubic-bezier(.45,.07,.22,1) 2.08s forwards}
+.opening-trace i:nth-child(1){--j:0}.opening-trace i:nth-child(2){--j:1}.opening-trace i:nth-child(3){--j:2}.opening-trace i:nth-child(4){--j:3}.opening-trace i:nth-child(5){--j:4}
+.opening-caption{font:400 11px/1.8 var(--serif);letter-spacing:.13em;color:#767c72;opacity:0;animation:softReveal 1s ease 2.9s forwards}
+@keyframes softReveal{to{opacity:1;transform:translateY(0)}}
+@keyframes veilLeave{0%{opacity:1;visibility:visible}99%{opacity:0;visibility:visible}100%{opacity:0;visibility:hidden}}
+@keyframes verticalUnspool{to{clip-path:inset(0 0 0 0)}}
+/* Concept filaments: vertical and actually animated, slow repeated weave/unweave */
+.thread-stage.couture-stage{mask-image:none!important;-webkit-mask-image:none!important;overflow:hidden!important;min-height:560px}
+.couture-stage .filament-art{opacity:1!important}
+.thread-stage.couture-stage .filament{stroke-dasharray:1200!important;stroke-dashoffset:1200!important;stroke-width:1.4!important;stroke-opacity:.78!important;animation:filamentCycle var(--cycle,16s) ease-in-out var(--start,0s) infinite alternate!important;animation-play-state:paused!important}
+.thread-stage.couture-stage.active .filament{animation-play-state:running!important}
+.thread-stage.couture-stage .filament:nth-child(3n){stroke-width:1.03!important;stroke:#ab927a!important}
+@keyframes filamentCycle{0%{stroke-dashoffset:1200;opacity:.2}45%{stroke-dashoffset:0;opacity:1}80%{stroke-dashoffset:0;opacity:.9}100%{stroke-dashoffset:-950;opacity:.25}}
+.couture-stage .thread-tag{opacity:1!important;transition:none!important}
+/* Final: same top-to-bottom language */
+.closing-thread.closing-filaments{height:245px!important;top:-60px!important;opacity:.9!important}
+.closing-filaments path{stroke-width:1.5!important;stroke-dasharray:750!important;stroke-dashoffset:750!important;transition:none!important;animation:filamentCycle 18s ease-in-out infinite alternate!important;animation-play-state:paused!important}
+.closing-filaments.active path{animation-play-state:running!important}
+.closing-filaments path:nth-child(2n){animation-delay:1s!important}
+@media(max-width:600px){.thread-stage.couture-stage{min-height:440px!important}.opening-verbs{font-size:42px}.closing-thread.closing-filaments{top:-45px!important}}
+@media(prefers-reduced-motion:reduce){.opening-veil{display:none!important}.thread-stage.couture-stage .filament,.closing-filaments path{animation:none!important;stroke-dashoffset:0!important}}
