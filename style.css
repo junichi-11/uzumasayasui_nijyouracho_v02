@@ -199,3 +199,48 @@
   .opening-ambient svg{width:235vw;left:57%;top:-3%;height:116%;opacity:.25}
   .intro-ambient svg,.owner-ambient svg{width:220vw}
 }
+
+
+/* v7 bugfix: hide underlying page during opening and remove flicker from silk threads */
+body.opening-playing{overflow:hidden;height:100svh}
+body.opening-playing main,
+body.opening-playing .hero,
+body.opening-playing .global-header,
+body.opening-playing .reading-progress{visibility:hidden}
+body.opening-playing .opening-veil{visibility:visible}
+
+/* keep opening fully opaque until it leaves */
+.opening-veil{background:#f5f4ee!important;z-index:2000!important}
+.opening-inner{z-index:4!important}
+
+/* smoother ambient silk: no blinking, only graceful motion */
+@keyframes ambientSilkFlow{
+  0%{stroke-dashoffset:1650; transform:translate3d(0,-34px,0); opacity:var(--flow-op,.18)}
+  48%{stroke-dashoffset:120; transform:translate3d(4px,-4px,0); opacity:var(--flow-op,.18)}
+  100%{stroke-dashoffset:-1420; transform:translate3d(0,36px,0); opacity:var(--flow-op,.18)}
+}
+.opening-ambient .grand-thread,
+.intro-ambient .grand-thread,
+.owner-ambient .grand-thread,
+.grand-stage .grand-thread,
+.grand-closing .grand-thread{
+  animation-name:ambientSilkFlow!important;
+  animation-timing-function:cubic-bezier(.35,.06,.3,.98)!important;
+  animation-iteration-count:infinite!important;
+  animation-direction:alternate!important;
+  opacity:var(--op)!important;
+}
+.opening-ambient .grand-thread{--flow-op:.18; stroke-width:.78!important; animation-duration:32s!important}
+.intro-ambient .grand-thread{--flow-op:.12; stroke-width:.64!important; animation-duration:34s!important}
+.owner-ambient .grand-thread{--flow-op:.10; stroke-width:.6!important; animation-duration:36s!important}
+.grand-stage .grand-thread{--flow-op:.52; animation-duration:20s!important}
+.grand-closing .grand-thread{--flow-op:.28; animation-duration:24s!important}
+
+/* reduce hard overlap shimmer */
+.opening-ambient svg{opacity:.24!important; filter:blur(.15px)}
+.intro-ambient svg{opacity:.12!important; filter:blur(.1px)}
+.owner-ambient svg{opacity:.10!important; filter:blur(.1px)}
+
+@media (max-width: 900px){
+  .opening-ambient svg{opacity:.21!important}
+}
