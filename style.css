@@ -330,3 +330,38 @@ body.opening-playing .hero,body.opening-playing .global-header,body.opening-play
  #threadStage .loom-travel{stroke-width:.83!important}
 }
 @media(prefers-reduced-motion:reduce){.loom-svg .loom-travel{animation:none!important;stroke-dasharray:none!important;stroke-dashoffset:0!important}}
+
+
+/* v11 — Cinematic cross-fade: the hero is rendered under the opening veil,
+   and revealed gradually rather than switched on at the end. */
+@keyframes openingCrossfade {
+  0%, 2% {opacity:1;visibility:visible}
+  100% {opacity:0;visibility:visible}
+}
+.opening-veil {
+  animation:openingCrossfade 2.05s cubic-bezier(.42,0,.23,1) 4.15s forwards !important;
+  will-change:opacity;
+}
+/* Hero must be present behind the overlay during the opacity transition. */
+body.opening-playing .hero {visibility:visible!important}
+body.opening-playing .hero .hero-content,
+body.opening-playing .hero .hero-bottom {opacity:0}
+body.opening-playing .hero .hero-image,
+body.opening-playing .hero .hero-shade {opacity:1}
+.hero .hero-content,.hero .hero-bottom{transition:opacity 1.35s ease}
+/* Everything except the architecture is revealed once the curtain has left. */
+body:not(.opening-playing) .hero .hero-content,
+body:not(.opening-playing) .hero .hero-bottom{opacity:1}
+@media(min-width:1024px){
+  /* Desktop: enlarge the weaving field and keep its depth without changing motion. */
+  #threadStage.loom-host{height:1040px!important;width:min(1500px,100%)!important;margin:12px auto 105px!important}
+  #threadStage .loom-svg{height:130%!important;width:112%!important;left:-6%!important;top:-15%!important;opacity:.82!important}
+  #threadStage .loom-travel{stroke-width:.94!important}
+  #threadStage .loom-under{stroke-width:.64!important;opacity:.13!important}
+  .intro-ambient .loom-svg{width:142%!important;left:-21%!important;opacity:.32!important}
+  .owner-ambient .loom-svg{width:158%!important;left:-29%!important;opacity:.26!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .opening-veil{animation:none!important;display:none!important}
+  body.opening-playing .hero .hero-content,body.opening-playing .hero .hero-bottom{opacity:1!important}
+}

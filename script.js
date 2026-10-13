@@ -8,7 +8,7 @@ const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById
 
 // Remove opening after the CSS transition, while preserving scroll/navigation.
 const openingVeil=document.getElementById('openingVeil');
-if(openingVeil){openingVeil.addEventListener('animationend',event=>{if(event.animationName==='veilLeave'){openingVeil.remove();document.body.classList.remove('opening-playing')}});}
+if(openingVeil){const finishOpening=()=>{openingVeil.remove();document.body.classList.remove('opening-playing')};openingVeil.addEventListener('animationend',event=>{if(event.target===openingVeil && (event.animationName==='openingCrossfade'||event.animationName==='veilLeave'))finishOpening()});if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)finishOpening();}
 
 
 
