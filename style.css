@@ -244,3 +244,44 @@ body.opening-playing .opening-veil{visibility:visible}
 @media (max-width: 900px){
   .opening-ambient svg{opacity:.21!important}
 }
+
+/* v8 diagnostic fix: a dash-offset loop was making entire threads disappear.
+   Thread strokes stay fully painted at constant opacity; only their shared SVG drifts. */
+.opening-ambient .grand-thread,
+.intro-ambient .grand-thread,
+.owner-ambient .grand-thread,
+.grand-stage .grand-thread {
+  animation: none !important;
+  animation-play-state: paused !important;
+  stroke-dasharray: none !important;
+  stroke-dashoffset: 0 !important;
+  transform: none !important;
+  opacity: var(--op, .4) !important;
+  will-change: auto !important;
+}
+@keyframes weaveQuietDrift {
+  0%   { transform: translate3d(-50%, -12px, 0) scale(1.005); }
+  50%  { transform: translate3d(calc(-50% + 15px), 13px, 0) scale(1.022); }
+  100% { transform: translate3d(calc(-50% - 12px), 36px, 0) scale(1.005); }
+}
+.opening-ambient svg.ambient-weave,
+.intro-ambient svg.ambient-weave,
+.owner-ambient svg.ambient-weave {
+  animation: weaveQuietDrift 38s ease-in-out infinite alternate !important;
+  transform-origin: center center !important;
+  filter:none !important;
+}
+/* The main installation moves as one coherent textile, never blinking. */
+@keyframes weaveStageFloat {
+  from { transform:translate3d(-.55%, -8px, 0); }
+  to   { transform:translate3d(.55%, 9px, 0); }
+}
+.thread-stage.grand-stage svg.grand-weave {
+  animation:weaveStageFloat 26s ease-in-out infinite alternate !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  .opening-ambient svg.ambient-weave,
+  .intro-ambient svg.ambient-weave,
+  .owner-ambient svg.ambient-weave,
+  .thread-stage.grand-stage svg.grand-weave{animation:none!important}
+}
