@@ -166,3 +166,36 @@
 @media(prefers-reduced-motion:reduce){
  .opening-ambient .grand-thread,.intro-ambient .grand-thread{animation:none!important;stroke-dasharray:none;stroke-dashoffset:0}
 }
+
+
+/* v6: smoother, larger background threads in three zones */
+.opening-veil,.intro,.owner-section{position:relative;isolation:isolate}
+.owner-section > .wrap,.owner-section > .owner-ambient{position:relative}
+.owner-section > .wrap{z-index:2}
+.opening-ambient,.intro-ambient,.owner-ambient{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.opening-ambient{z-index:1;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 10%,black 92%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 10%,black 92%,transparent 100%)}
+.opening-ambient svg{position:absolute;top:-8%;left:50%;height:124%;width:min(170vw,2100px);transform:translateX(-50%);opacity:.34}
+.intro-ambient{z-index:1;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 14%,black 86%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 14%,black 86%,transparent 100%)}
+.intro-ambient svg{position:absolute;top:-12%;left:50%;height:112%;width:min(145vw,1850px);transform:translateX(-50%);opacity:.14}
+.owner-ambient{z-index:1;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 14%,black 85%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 14%,black 85%,transparent 100%)}
+.owner-ambient svg{position:absolute;top:-16%;left:50%;height:120%;width:min(148vw,1900px);transform:translateX(-50%);opacity:.12}
+.opening-ambient .grand-thread,.intro-ambient .grand-thread,.owner-ambient .grand-thread,.grand-stage .grand-thread,.grand-closing .grand-thread{stroke-linecap:round;stroke-linejoin:round}
+.opening-ambient .grand-thread{stroke-width:.82;animation-duration:26s}
+.intro-ambient .grand-thread{stroke-width:.68;animation-duration:28s}
+.owner-ambient .grand-thread{stroke-width:.64;animation-duration:30s}
+.opening-verbs,.opening-caption,.opening-overline,.intro-grid h2,.intro-copy,.owner-section .display,.owner-intro,.value-grid,.closing{position:relative;z-index:3}
+@media(max-width:900px){
+  .opening-ambient svg{width:200vw;left:54%;top:-5%;height:118%;opacity:.28}
+  .intro-ambient svg{width:185vw;opacity:.12}
+  .owner-ambient svg{width:185vw;opacity:.10}
+}
+@media(max-width:600px){
+  .opening-ambient svg{width:235vw;left:57%;top:-3%;height:116%;opacity:.25}
+  .intro-ambient svg,.owner-ambient svg{width:220vw}
+}

@@ -11,17 +11,52 @@ const openingVeil=document.getElementById('openingVeil');
 if(openingVeil){openingVeil.addEventListener('animationend',event=>{if(event.animationName==='veilLeave'){openingVeil.remove();document.body.classList.remove('opening-playing')}});}
 
 
-// Reuse identical woven geometry for ambient threads. The motion language remains vertical.
+
+
+// Smooth the thread geometry so it reads as silk rather than connected straight segments.
 (function(){
- const original=document.querySelector('#threadStage svg.grand-weave');
- if(!original)return;
- [['.opening-ambient',.95],['.intro-ambient',1]].forEach(([sel,scale])=>{
-   const target=document.querySelector(sel);
-   if(!target)return;
-   const copy=original.cloneNode(true);
-   copy.removeAttribute('id');
-   copy.classList.add('ambient-weave');
-   copy.setAttribute('focusable','false');
-   target.appendChild(copy);
- });
+  function parsePoints(d){
+    const nums=(d.match(/-?\d*\.?\d+/g)||[]).map(Number);
+    const pts=[];
+    for(let i=0;i<nums.length;i+=2){ pts.push({x:nums[i],y:nums[i+1]}); }
+    return pts;
+  }
+  function catmullRom2bezier(points){
+    if(!points || points.length<2) return '';
+    let d=`M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
+    for(let i=0;i<points.length-1;i++){
+      const p0=points[i-1] || points[i];
+      const p1=points[i];
+      const p2=points[i+1];
+      const p3=points[i+2] || p2;
+      const cp1x=p1.x + (p2.x-p0.x)/6;
+      const cp1y=p1.y + (p2.y-p0.y)/6;
+      const cp2x=p2.x - (p3.x-p1.x)/6;
+      const cp2y=p2.y - (p3.y-p1.y)/6;
+      d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+    }
+    return d;
+  }
+  function smoothAllThreads(root=document){
+    root.querySelectorAll('.grand-thread').forEach(path=>{
+      if(path.dataset.smoothed==='1') return;
+      const pts=parsePoints(path.getAttribute('d')||'');
+      if(pts.length>3){
+        path.setAttribute('d',catmullRom2bezier(pts));
+        path.dataset.smoothed='1';
+      }
+    });
+  }
+  smoothAllThreads(document);
+  const original=document.querySelector('#threadStage svg.grand-weave');
+  if(!original) return;
+  [['.opening-ambient'],['.intro-ambient'],['.owner-ambient']].forEach(([sel])=>{
+    const target=document.querySelector(sel);
+    if(!target) return;
+    const copy=original.cloneNode(true);
+    copy.classList.add('ambient-weave');
+    copy.removeAttribute('id');
+    smoothAllThreads(copy);
+    target.appendChild(copy);
+  });
 })();
