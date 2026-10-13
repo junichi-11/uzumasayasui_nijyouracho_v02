@@ -19,3 +19,57 @@
 .thread-stage.silk-stage.active .thread-tag{transition-delay:1.8s}
 @media(max-width:700px){.thread-hero.silk-hero{inset:-3% -70% -6% -20%;opacity:.88}.thread-stage.silk-stage{height:480px;width:100%;margin:32px auto 48px}.thread-stage.silk-stage .thread-tag.left{left:8%;top:20%}.thread-stage.silk-stage .thread-tag.center{left:42%;top:49%}.thread-stage.silk-stage .thread-tag.right{right:7%;top:76%}}
 @media(prefers-reduced-motion:reduce){.silk-strand{animation:none!important;stroke-dasharray:none!important;opacity:.6!important}.thread-stage.silk-stage .thread-tag{opacity:1!important}}
+
+/* 2026-10-13 couture vertical filament redesign: intentionally limited to concept sections */
+.thread-hero,.silk-hero{display:none!important}
+.thread-stage.couture-stage{position:relative!important;width:min(820px,calc(100% - 48px))!important;height:560px!important;margin:50px auto 70px!important;overflow:hidden!important;opacity:1!important;background:radial-gradient(ellipse at 50% 45%,rgba(235,232,222,.43),transparent 57%);mask-image:linear-gradient(to bottom,transparent 0%,black 9%,black 90%,transparent 100%)}
+.couture-stage .filament-art{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.couture-stage .filament{fill:none;stroke:#8e9f92;stroke-opacity:.55;stroke-width:.9;stroke-linecap:round;stroke-dasharray:790;stroke-dashoffset:790;transition:none!important;animation:none}
+.couture-stage .filament:nth-child(3n){stroke:#c0a58a;stroke-width:.65;stroke-opacity:.55}
+.couture-stage.active .filament{animation:threadGather 12s cubic-bezier(.45,.08,.22,1) var(--start) both!important}
+@keyframes threadGather{0%{stroke-dashoffset:790;opacity:0}22%{opacity:.8}72%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:-105;opacity:.7}}
+.thread-stage.couture-stage .thread-tag{z-index:4;background:rgba(250,249,245,.87);backdrop-filter:blur(3px);font-size:clamp(17px,2.4vw,26px);letter-spacing:.13em;white-space:nowrap;padding:8px 12px;box-shadow:none;transition:opacity .8s ease!important}
+.thread-stage.couture-stage .thread-tag.left{left:16%;top:18%;bottom:auto}
+.thread-stage.couture-stage .thread-tag.center{left:55%;top:48%;bottom:auto}
+.thread-stage.couture-stage .thread-tag.right{left:28%;right:auto;top:77%;bottom:auto}
+.couture-stage.active .thread-tag.left{transition-delay:1.2s!important}
+.couture-stage.active .thread-tag.center{transition-delay:2.5s!important}
+.couture-stage.active .thread-tag.right{transition-delay:4.2s!important}
+.connection-canvas{height:710px;background:none!important;isolation:isolate}
+.connection-canvas:before{content:'';position:absolute;left:50%;top:51%;width:510px;height:510px;transform:translate(-50%,-50%);border:1px solid rgba(125,140,123,.12);border-radius:50%;pointer-events:none}
+.connection-lines.clean-connections{inset:0;opacity:1}
+.connection-lines.clean-connections path{fill:none;stroke:#98a799;stroke-width:1.3;stroke-dasharray:none;stroke-linecap:round}
+.connection-lines.clean-connections path:nth-child(2){stroke:#acac94}
+.connection-lines.clean-connections path:nth-child(3){stroke:#b6a68d}
+.conn-core{box-shadow:0 24px 80px rgba(43,58,45,.06);border-color:#b7c2b4}
+.conn-node{box-shadow:none;border:1px solid #d6dbd1;min-height:150px;background:#fbfbf8}
+.conn-node:before{content:'';display:block;width:27px;height:1px;background:#9d9a82;margin-bottom:15px}
+.conn-node.n1{left:0;bottom:22px}
+.conn-node.n2{left:0;top:22px}
+.conn-node.n3{right:0;top:155px}
+.conn-footnote{bottom:38px;right:15px;max-width:260px;font-size:13px}
+.closing{position:relative;padding-top:180px!important}
+.closing-thread.closing-filaments{position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:320px;height:200px;overflow:hidden;opacity:.6;pointer-events:none}
+.closing-filaments svg{height:100%;width:100%}
+.closing-filaments path{fill:none;stroke:#a9b6a7;stroke-width:1;stroke-opacity:.48;stroke-linecap:round;stroke-dasharray:490;stroke-dashoffset:490;transition:stroke-dashoffset 7s cubic-bezier(.35,.1,.25,1)}
+.closing-filaments.active path{stroke-dashoffset:0}
+.closing-filaments path:nth-child(2n){stroke:#cab99c;stroke-width:.7}
+@media(max-width:900px){.connection-canvas:before{width:390px;height:390px}.conn-node.n3{top:115px}}
+@media(max-width:600px){
+ .thread-stage.couture-stage{height:400px!important;width:100%!important;margin:24px auto 44px!important}
+ .thread-stage.couture-stage .thread-tag.left{left:7%;top:19%}
+ .thread-stage.couture-stage .thread-tag.center{left:43%;top:48%}
+ .thread-stage.couture-stage .thread-tag.right{left:20%;top:77%}
+ .connection-canvas{height:auto;display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:16px 0 26px}
+ .connection-canvas:before{display:none}
+ .connection-lines.clean-connections{display:none}
+ .conn-core{position:relative;left:auto;top:auto;transform:none!important;align-self:center;width:244px;height:244px;margin:4px auto 25px}
+ .conn-node,.conn-node.n1,.conn-node.n2,.conn-node.n3{position:relative;top:auto;left:auto;right:auto;bottom:auto;width:100%;min-height:0;padding:17px 22px}
+ .conn-node h3{font-size:22px;margin:8px 0}.conn-node p{margin:5px 0;font-size:12px}
+ .conn-node:before{margin-bottom:8px}
+ .conn-node.n2{order:2}.conn-node.n1{order:3}.conn-node.n3{order:4}
+ .conn-core{order:1}
+ .conn-footnote{position:relative;bottom:auto;right:auto;order:5;max-width:none;text-align:left;margin:14px 0 0;font-size:12px}
+ .closing{padding-top:155px!important}.closing-thread.closing-filaments{width:260px;height:170px}
+}
+@media(prefers-reduced-motion:reduce){.couture-stage .filament,.closing-filaments path{animation:none!important;stroke-dashoffset:0!important}.couture-stage .thread-tag{opacity:1!important}}
