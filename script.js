@@ -60,3 +60,56 @@ if(openingVeil){openingVeil.addEventListener('animationend',event=>{if(event.ani
     target.appendChild(copy);
   });
 })();
+
+
+// Living silk: continuously morph each strand's geometry without blinking or redrawing strokes.
+(function(){
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  if(reduced.matches)return;
+  const instances=[...document.querySelectorAll('.opening-ambient .grand-thread,.intro-ambient .grand-thread,.owner-ambient .grand-thread,.grand-stage .grand-thread')].map((node,index)=>{
+    const d=node.getAttribute('d')||'';
+    const matches=[...d.matchAll(/-?\d+(?:\.\d+)?/g)].map(m=>Number(m[0]));
+    // Paths are converted to cubic curves by the existing smoothing routine. Extract endpoints,
+    // then remake fresh smooth curves every frame.
+    let pts=[];
+    if(d.includes(' C ')){
+      if(matches.length>=2)pts.push([matches[0],matches[1]]);
+      for(let i=2;i+5<matches.length;i+=6)pts.push([matches[i+4],matches[i+5]]);
+    }
+    if(pts.length<8)return null;
+    const inStage=Boolean(node.closest('.grand-stage'));
+    return {node,pts,index,amplitude:inStage?25:36,
+      phase:index*.37,frequency:.0085+(index%7)*.00023,velocity:.00019+(index%5)*.000025};
+  }).filter(Boolean);
+  function renderPath(item,t){
+    const arr=item.pts.map(([x,y],i)=>{
+      const envelope=Math.sin(Math.PI*i/(item.pts.length-1))**.65;
+      const displacement=(Math.sin(y*item.frequency-t*item.velocity+item.phase)*.7+
+        Math.sin(y*.0042+t*.00013+item.phase*.6)*.3)*item.amplitude*envelope;
+      return [x+displacement,y];
+    });
+    let d='M '+arr[0][0].toFixed(2)+' '+arr[0][1].toFixed(2);
+    for(let i=0;i<arr.length-1;i++){
+      const p0=arr[Math.max(0,i-1)],p1=arr[i],p2=arr[i+1],p3=arr[Math.min(arr.length-1,i+2)];
+      const a=p1[0]+(p2[0]-p0[0])/6,b=p1[1]+(p2[1]-p0[1])/6;
+      const c=p2[0]-(p3[0]-p1[0])/6,e=p2[1]-(p3[1]-p1[1])/6;
+      d+=' C '+a.toFixed(2)+' '+b.toFixed(2)+' '+c.toFixed(2)+' '+e.toFixed(2)+' '+p2[0].toFixed(2)+' '+p2[1].toFixed(2);
+    }
+    item.node.setAttribute('d',d);
+  }
+  let last=0;
+  function tick(now){
+    if(now-last>33){
+      last=now;
+      for(const item of instances){
+        const el=item.node.closest('.opening-ambient,.intro-ambient,.owner-ambient,.grand-stage');
+        if(!el||!el.isConnected)continue;
+        const r=el.getBoundingClientRect();
+        if(r.bottom<0||r.top>innerHeight)continue;
+        renderPath(item,now);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();

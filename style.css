@@ -285,3 +285,8 @@ body.opening-playing .opening-veil{visibility:visible}
   .owner-ambient svg.ambient-weave,
   .thread-stage.grand-stage svg.grand-weave{animation:none!important}
 }
+
+/* v9: path geometry itself morphs; no opacity or dash flicker. */
+.opening-ambient svg.ambient-weave,.intro-ambient svg.ambient-weave,.owner-ambient svg.ambient-weave,.thread-stage.grand-stage svg.grand-weave{animation:none!important}
+.opening-ambient .grand-thread,.intro-ambient .grand-thread,.owner-ambient .grand-thread,.grand-stage .grand-thread{animation:none!important;stroke-dasharray:none!important;stroke-dashoffset:0!important;opacity:var(--op,.4)!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.grand-thread{animation:none!important}}
