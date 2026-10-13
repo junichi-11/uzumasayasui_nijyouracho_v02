@@ -122,3 +122,47 @@
 @media(max-width:900px){.market-grid{grid-template-columns:1fr!important}.market-section .market-grid h2.display{font-size:clamp(30px,5.6vw,48px)!important}.thread-stage.grand-stage{height:690px!important}.grand-closing{height:420px!important;top:-140px!important}}
 @media(max-width:600px){.thread-stage.grand-stage{height:570px!important;margin:0 auto 42px!important}.grand-closing{height:390px!important;top:-130px!important;width:140vw!important}.closing{padding-top:195px!important}.market-section .market-grid h2.display{font-size:clamp(29px,7.3vw,41px)!important;line-height:1.65!important}}
 @media(prefers-reduced-motion:reduce){.grand-stage .grand-thread,.grand-closing .grand-thread{animation:none!important;stroke-dasharray:none!important;opacity:var(--op)!important}}
+
+
+/* v5: Remove stray opening ticks; a unified, spacious vertical weave replaces them. */
+.opening-trace{display:none!important}
+.opening-veil{isolation:isolate}
+.opening-inner{position:relative;z-index:3}
+.opening-ambient{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 1%,black 18%,black 83%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 1%,black 18%,black 83%,transparent 100%)}
+.opening-ambient svg{position:absolute;top:-24%;left:50%;height:145%;width:min(130vw,1500px);transform:translateX(-50%);opacity:.28}
+.opening-ambient .grand-thread{fill:none;stroke-width:.75;stroke-linecap:round;
+ stroke-dasharray:1750 1750;stroke-dashoffset:1750;animation:grandUnweave 23s cubic-bezier(.41,.03,.3,.98) var(--td) infinite alternate;opacity:var(--op)}
+.opening-verbs{position:relative;z-index:4;text-shadow:0 1px 14px rgba(247,246,241,.96),0 0 38px rgba(247,246,241,.96)}
+.intro{position:relative;isolation:isolate}
+.intro>.wrap,.intro>.thread-stage{position:relative;z-index:2}
+.intro-ambient{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,black 15%,black 80%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,black 15%,black 80%,transparent)}
+.intro-ambient svg{position:absolute;top:-15%;left:50%;height:96%;width:min(105vw,1450px);
+ transform:translateX(-50%);opacity:.17}
+.intro-ambient .grand-thread{fill:none;stroke-width:.65;stroke-linecap:round;
+ stroke-dasharray:1750 1750;stroke-dashoffset:1750;animation:grandUnweave 25s cubic-bezier(.41,.03,.3,.98) var(--td) infinite alternate;opacity:var(--op)}
+.intro-grid{position:relative;z-index:3}
+.intro-grid h2,.intro-copy{position:relative;z-index:3;text-shadow:0 0 24px rgba(250,249,245,.98),0 0 50px rgba(250,249,245,.96)}
+/* Dedicated space for large headline, data column never overlaps with it */
+.market-grid{display:grid!important;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr)!important;
+ gap:clamp(50px,6vw,96px)!important;align-items:start!important}
+.market-section .market-grid h2.display{font-size:clamp(29px,2.85vw,39px)!important;line-height:1.65!important;
+ letter-spacing:.015em!important;max-width:none!important;margin:24px 0 26px!important}
+.market-title-line{display:block;white-space:nowrap}
+.market-grid>.market-stats{min-width:0;position:relative;z-index:2;padding-top:70px}
+@media(max-width:1000px){
+ .market-grid{grid-template-columns:1fr!important;gap:36px!important}
+ .market-grid>.market-stats{padding-top:0}
+ .market-title-line{white-space:normal}
+}
+@media(max-width:600px){
+ .market-section .market-grid h2.display{font-size:clamp(25px,6.2vw,37px)!important}
+ .opening-ambient svg{width:155vw;opacity:.24;left:55%}
+ .intro-ambient svg{width:175vw;opacity:.11}
+}
+@media(prefers-reduced-motion:reduce){
+ .opening-ambient .grand-thread,.intro-ambient .grand-thread{animation:none!important;stroke-dasharray:none;stroke-dashoffset:0}
+}

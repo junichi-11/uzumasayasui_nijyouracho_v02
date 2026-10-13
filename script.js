@@ -9,3 +9,19 @@ const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById
 // Remove opening after the CSS transition, while preserving scroll/navigation.
 const openingVeil=document.getElementById('openingVeil');
 if(openingVeil){openingVeil.addEventListener('animationend',event=>{if(event.animationName==='veilLeave'){openingVeil.remove();document.body.classList.remove('opening-playing')}});}
+
+
+// Reuse identical woven geometry for ambient threads. The motion language remains vertical.
+(function(){
+ const original=document.querySelector('#threadStage svg.grand-weave');
+ if(!original)return;
+ [['.opening-ambient',.95],['.intro-ambient',1]].forEach(([sel,scale])=>{
+   const target=document.querySelector(sel);
+   if(!target)return;
+   const copy=original.cloneNode(true);
+   copy.removeAttribute('id');
+   copy.classList.add('ambient-weave');
+   copy.setAttribute('focusable','false');
+   target.appendChild(copy);
+ });
+})();
