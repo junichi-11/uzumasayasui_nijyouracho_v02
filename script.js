@@ -13,103 +13,51 @@ if(openingVeil){openingVeil.addEventListener('animationend',event=>{if(event.ani
 
 
 
-// Smooth the thread geometry so it reads as silk rather than connected straight segments.
-(function(){
-  function parsePoints(d){
-    const nums=(d.match(/-?\d*\.?\d+/g)||[]).map(Number);
-    const pts=[];
-    for(let i=0;i<nums.length;i+=2){ pts.push({x:nums[i],y:nums[i+1]}); }
-    return pts;
-  }
-  function catmullRom2bezier(points){
-    if(!points || points.length<2) return '';
-    let d=`M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
-    for(let i=0;i<points.length-1;i++){
-      const p0=points[i-1] || points[i];
-      const p1=points[i];
-      const p2=points[i+1];
-      const p3=points[i+2] || p2;
-      const cp1x=p1.x + (p2.x-p0.x)/6;
-      const cp1y=p1.y + (p2.y-p0.y)/6;
-      const cp2x=p2.x - (p3.x-p1.x)/6;
-      const cp2y=p2.y - (p3.y-p1.y)/6;
-      d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
-    }
-    return d;
-  }
-  function smoothAllThreads(root=document){
-    root.querySelectorAll('.grand-thread').forEach(path=>{
-      if(path.dataset.smoothed==='1') return;
-      const pts=parsePoints(path.getAttribute('d')||'');
-      if(pts.length>3){
-        path.setAttribute('d',catmullRom2bezier(pts));
-        path.dataset.smoothed='1';
-      }
-    });
-  }
-  smoothAllThreads(document);
-  const original=document.querySelector('#threadStage svg.grand-weave');
-  if(!original) return;
-  [['.opening-ambient'],['.intro-ambient'],['.owner-ambient']].forEach(([sel])=>{
-    const target=document.querySelector(sel);
-    if(!target) return;
-    const copy=original.cloneNode(true);
-    copy.classList.add('ambient-weave');
-    copy.removeAttribute('id');
-    smoothAllThreads(copy);
-    target.appendChild(copy);
-  });
-})();
 
 
-// Living silk: continuously morph each strand's geometry without blinking or redrawing strokes.
+// Luminous-but-restrained loom: a moving drawing front travels DOWN the silky cubic path.
+// Unlike geometric wobble, the travelling stroke is the animation; no opacity pulsing.
 (function(){
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-  if(reduced.matches)return;
-  const instances=[...document.querySelectorAll('.opening-ambient .grand-thread,.intro-ambient .grand-thread,.owner-ambient .grand-thread,.grand-stage .grand-thread')].map((node,index)=>{
-    const d=node.getAttribute('d')||'';
-    const matches=[...d.matchAll(/-?\d+(?:\.\d+)?/g)].map(m=>Number(m[0]));
-    // Paths are converted to cubic curves by the existing smoothing routine. Extract endpoints,
-    // then remake fresh smooth curves every frame.
-    let pts=[];
-    if(d.includes(' C ')){
-      if(matches.length>=2)pts.push([matches[0],matches[1]]);
-      for(let i=2;i+5<matches.length;i+=6)pts.push([matches[i+4],matches[i+5]]);
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const NS='http://www.w3.org/2000/svg';
+ const svgEl=(tag,props={})=>{const el=document.createElementNS(NS,tag);Object.entries(props).forEach(([k,v])=>el.setAttribute(k,v));return el;};
+ function makeLoom(type){
+  const svg=svgEl('svg',{class:'loom-svg loom-'+type,viewBox:'0 0 1100 1600',preserveAspectRatio:'xMidYMid slice','aria-hidden':'true'});
+  const grp=svgEl('g',{class:'loom-bundle'});svg.appendChild(grp);
+  const count=type==='stage'?43:36;
+  for(let i=0;i<count;i++){
+    const u=i/(count-1),x0=185+i*(730/(count-1));
+    const phase=(i%9)*.4;
+    // All paths are cubic; they cross in the middle, open again, and gently taper.
+    const start=x0+(u-.5)*40;
+    const midway=550+(u-.5)*155+Math.sin(i*.67)*28;
+    const lower=550-(u-.5)*515+Math.sin(i*.41)*23;
+    const end=x0+Math.sin(i*.31)*26;
+    const d=`M ${start.toFixed(2)} -220 C ${(start+Math.sin(phase)*38).toFixed(2)} 160, ${(midway-75).toFixed(2)} 350, ${midway.toFixed(2)} 710 S ${lower.toFixed(2)} 1110, ${lower.toFixed(2)} 1270 S ${end.toFixed(2)} 1510, ${end.toFixed(2)} 1840`;
+    const tone=i%8===0?'#ac9679':i%4===0?'#718879':'#9caa9d';
+    const strand=svgEl('path',{d,stroke:tone,class:'loom-under',style:`--thread:${i};--base:${(0.13+(i%6)*.015).toFixed(2)}`});
+    const traveling=svgEl('path',{d,stroke:tone,class:'loom-travel',style:`--thread:${i};--travel-delay:${(-i*.29).toFixed(2)}s;--speed:${(18+(i%7)*1.4).toFixed(2)}s`});
+    grp.appendChild(strand);grp.appendChild(traveling);
+    // One-time drawing grows from top to bottom, retaining the finished line afterwards.
+    if(!reduced){
+      const length=traveling.getTotalLength();
+      traveling.style.strokeDasharray=`${(length*.24).toFixed(1)} ${length.toFixed(1)}`;
+      traveling.style.setProperty('--length',length.toFixed(1));
+      traveling.style.setProperty('--offset',(length*.24).toFixed(1));
     }
-    if(pts.length<8)return null;
-    const inStage=Boolean(node.closest('.grand-stage'));
-    return {node,pts,index,amplitude:inStage?25:36,
-      phase:index*.37,frequency:.0085+(index%7)*.00023,velocity:.00019+(index%5)*.000025};
-  }).filter(Boolean);
-  function renderPath(item,t){
-    const arr=item.pts.map(([x,y],i)=>{
-      const envelope=Math.sin(Math.PI*i/(item.pts.length-1))**.65;
-      const displacement=(Math.sin(y*item.frequency-t*item.velocity+item.phase)*.7+
-        Math.sin(y*.0042+t*.00013+item.phase*.6)*.3)*item.amplitude*envelope;
-      return [x+displacement,y];
-    });
-    let d='M '+arr[0][0].toFixed(2)+' '+arr[0][1].toFixed(2);
-    for(let i=0;i<arr.length-1;i++){
-      const p0=arr[Math.max(0,i-1)],p1=arr[i],p2=arr[i+1],p3=arr[Math.min(arr.length-1,i+2)];
-      const a=p1[0]+(p2[0]-p0[0])/6,b=p1[1]+(p2[1]-p0[1])/6;
-      const c=p2[0]-(p3[0]-p1[0])/6,e=p2[1]-(p3[1]-p1[1])/6;
-      d+=' C '+a.toFixed(2)+' '+b.toFixed(2)+' '+c.toFixed(2)+' '+e.toFixed(2)+' '+p2[0].toFixed(2)+' '+p2[1].toFixed(2);
-    }
-    item.node.setAttribute('d',d);
   }
-  let last=0;
-  function tick(now){
-    if(now-last>33){
-      last=now;
-      for(const item of instances){
-        const el=item.node.closest('.opening-ambient,.intro-ambient,.owner-ambient,.grand-stage');
-        if(!el||!el.isConnected)continue;
-        const r=el.getBoundingClientRect();
-        if(r.bottom<0||r.top>innerHeight)continue;
-        renderPath(item,now);
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
+  return svg;
+ }
+ const areas=[['.opening-ambient','opening'],['.intro-ambient','intro'],['#threadStage','stage'],['.owner-ambient','owner']];
+ for(const [selector,type] of areas){
+  const target=document.querySelector(selector);if(!target)continue;
+  target.querySelectorAll('svg').forEach(n=>n.remove());
+  target.appendChild(makeLoom(type));
+  target.classList.add('loom-host');
+ }
+ // Observe the main weaving scene; only animate when it enters view.
+ const stage=document.getElementById('threadStage');
+ if(stage){const io=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){stage.classList.add('loom-running');io.unobserve(stage)}
+ }),{threshold:.08});io.observe(stage)}
 })();

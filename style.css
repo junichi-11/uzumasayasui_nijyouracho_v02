@@ -290,3 +290,43 @@ body.opening-playing .opening-veil{visibility:visible}
 .opening-ambient svg.ambient-weave,.intro-ambient svg.ambient-weave,.owner-ambient svg.ambient-weave,.thread-stage.grand-stage svg.grand-weave{animation:none!important}
 .opening-ambient .grand-thread,.intro-ambient .grand-thread,.owner-ambient .grand-thread,.grand-stage .grand-thread{animation:none!important;stroke-dasharray:none!important;stroke-dashoffset:0!important;opacity:var(--op,.4)!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){.grand-thread{animation:none!important}}
+
+
+/* v10 — stable, continuous loom. Never blink the stroke or deform it in JS. */
+.loom-host{overflow:hidden!important;isolation:isolate}
+.loom-host .loom-svg{position:absolute!important;width:100%!important;height:100%!important;inset:0!important;
+  left:0!important;top:0!important;transform:none!important;overflow:visible!important;opacity:1!important;filter:none!important}
+.loom-svg .loom-under,.loom-svg .loom-travel{fill:none;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.loom-svg .loom-under{stroke-width:.72;opacity:var(--base,.16)}
+.loom-svg .loom-travel{stroke-width:1.03;opacity:.52;stroke-dashoffset:var(--length,2300);
+ animation:loomTravel var(--speed,22s) linear var(--travel-delay,0s) infinite both;
+ animation-play-state:running}
+@keyframes loomTravel{
+  from{stroke-dashoffset:var(--length,2300)}
+  to{stroke-dashoffset:calc(-1 * var(--length,2300))}
+}
+/* Ambient zones occupy a generous vertical field; eliminate rectangular cutoff. */
+.opening-ambient,.intro-ambient,.owner-ambient{position:absolute!important;inset:0!important;overflow:hidden!important;pointer-events:none}
+.opening-ambient{z-index:1!important;mask-image:linear-gradient(to bottom,transparent,black 13%,black 82%,transparent)!important;-webkit-mask-image:linear-gradient(to bottom,transparent,black 13%,black 82%,transparent)!important}
+.intro-ambient{z-index:1!important;mask-image:linear-gradient(to bottom,transparent,black 12%,black 88%,transparent)!important;-webkit-mask-image:linear-gradient(to bottom,transparent,black 12%,black 88%,transparent)!important}
+.owner-ambient{z-index:1!important;mask-image:linear-gradient(to bottom,transparent,black 15%,black 86%,transparent)!important;-webkit-mask-image:linear-gradient(to bottom,transparent,black 15%,black 86%,transparent)!important}
+.opening-ambient .loom-svg{height:145%!important;width:160%!important;top:-20%!important;left:-30%!important;opacity:.56!important}
+.intro-ambient .loom-svg{height:120%!important;width:125%!important;top:-10%!important;left:-12.5%!important;opacity:.31!important}
+.owner-ambient .loom-svg{height:125%!important;width:140%!important;top:-15%!important;left:-20%!important;opacity:.26!important}
+#threadStage.loom-host{height:840px!important;width:min(1180px,100%)!important;margin:10px auto 80px!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,black 10%,black 90%,transparent 100%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 10%,black 90%,transparent 100%)!important}
+#threadStage .loom-svg{width:100%!important;height:122%!important;top:-11%!important;opacity:.88!important}
+#threadStage .loom-travel{animation-play-state:paused}
+#threadStage.loom-running .loom-travel{animation-play-state:running}
+.opening-veil{position:fixed!important;inset:0!important;z-index:2000!important;background:#f5f4ee!important}
+body.opening-playing{overflow:hidden!important}
+body.opening-playing .hero,body.opening-playing .global-header,body.opening-playing .reading-progress{visibility:hidden!important}
+@media(max-width:700px){
+ .opening-ambient .loom-svg{width:245%!important;left:-72.5%!important;top:-15%!important;height:140%!important}
+ .intro-ambient .loom-svg,.owner-ambient .loom-svg{width:205%!important;left:-52.5%!important}
+ #threadStage.loom-host{height:590px!important}
+ #threadStage .loom-svg{height:135%!important;top:-17.5%!important;width:130%!important;left:-15%!important}
+ #threadStage .loom-travel{stroke-width:.83!important}
+}
+@media(prefers-reduced-motion:reduce){.loom-svg .loom-travel{animation:none!important;stroke-dasharray:none!important;stroke-dashoffset:0!important}}
